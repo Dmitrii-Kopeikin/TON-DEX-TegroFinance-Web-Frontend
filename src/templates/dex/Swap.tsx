@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { Coins } from "ton3-core";
 import { useForm } from "react-hook-form";
 import { DexContext, DexContextType } from "../../context";
-import { NavComponent } from "./components/Nav";
 import { DeLabConnector } from "../../deLabContext";
 import { fieldNormalizer } from "../../utils";
 import {
@@ -184,7 +183,6 @@ export default function SwapPage() {
     <Container>
       <Row className="justify-content-md-center">
         <Col lg={7} xl={5}>
-          <NavComponent />
           <Card className="p-0">
             <Card.Header
               className="d-flex align-items-center border-bottom-light"

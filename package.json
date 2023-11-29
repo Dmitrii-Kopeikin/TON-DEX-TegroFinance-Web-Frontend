@@ -14,6 +14,7 @@
     "@tegro/ton3-client": "^0.0.17",
     "@tegro/ton3-contracts": "^0.0.4",
     "@tonconnect/sdk": "^2.0.4",
+    "@tonconnect/ui-react": "^2.0.0-beta.6",
     "@types/bn.js": "^5.1.0",
     "@types/buffers": "^0.1.31",
     "@types/react-transition-group": "^4.4.5",
