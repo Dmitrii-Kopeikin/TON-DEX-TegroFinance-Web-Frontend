@@ -2,8 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ErrorResponse } from "./common";
 import {
   Asset,
-  CompleteProvideLiquidityRequest,
+  AssetsRequest,
   CompleteProvideLiquidityActivateRequest,
+  CompleteProvideLiquidityRequest,
   GetBalancesResponse,
   Pool,
   ProvideLiquidityRequest,
@@ -25,9 +26,15 @@ export const dexApiV1 = createApi({
     credentials: "include",
   }),
   endpoints: (builder) => ({
-    getAssets: builder.query<{ [key: string]: Asset }, void>({
-      query: () => "/assets",
-      transformResponse: (response: Asset[]) => {
+    getAssets: builder.query<{ [key: string]: Asset }, AssetsRequest | void>({
+      query: (requestParameters) => ({
+        url: "/assets",
+        method: "POST",
+        body: {
+          exclude_deprecated: requestParameters?.exclude_deprecated || false,
+          exclude_community: requestParameters?.exclude_community || false,
+        },
+      }),      transformResponse: (response: Asset[]) => {
         return response.reduce((acc: { [key: string]: Asset }, asset) => {
           return {
             ...acc,

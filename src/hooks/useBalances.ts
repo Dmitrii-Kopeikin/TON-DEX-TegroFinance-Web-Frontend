@@ -3,15 +3,9 @@ import { Coins } from "ton3-core";
 import { useGetBalancesQuery } from "../store/api/dexApiSlice";
 import { useAssets } from "./useAssets";
 
-const TON_ADDRESS: string = import.meta.env.VITE_TON_ADDRESS;
-const TGR_ADDRESS: string = import.meta.env.VITE_TEGRO_ADDRESS;
+export type Balances = { [key: string]: Coins };
 
-export interface Balance {
-  tonBalance: Coins;
-  tgrBalance: Coins;
-}
-
-export const useBalance = () => {
+export const useBalances = () => {
   const wallet = useTonWallet();
   const walletAddress = useTonAddress();
 
@@ -23,14 +17,20 @@ export const useBalance = () => {
   });
 
   if (!balances || !assets) {
-    return {
-      tonBalance: Coins.fromNano(0, 9),
-      tgrBalance: Coins.fromNano(0, 9),
-    };
+    return {};
   }
 
-  return {
-    tonBalance: Coins.fromNano(balances[TON_ADDRESS] ?? 0, 9),
-    tgrBalance: Coins.fromNano(balances[TGR_ADDRESS] ?? 0, 9),
-  };
+  const new_balances: Balances = {};
+
+  for (const address of Object.keys(balances)) {
+    if (!assets[address]) {
+      continue;
+    }
+    new_balances[address] = Coins.fromNano(
+      balances[address],
+      assets[address].decimals
+    );
+  }
+
+  return new_balances;
 };

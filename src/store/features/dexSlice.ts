@@ -1,26 +1,44 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+
+export interface Settings {
+  excludeDeprecatedAssets: boolean;
+  excludeCommunityAssets: boolean;
+}
 
 export interface DexState {
-  token: string | null;
+  settings: Settings;
 }
 
 const initialState: DexState = {
-  token: null,
+  settings: {
+    excludeDeprecatedAssets: true,
+    excludeCommunityAssets: false,
+  },
 };
 
 export const dexSlice = createSlice({
-  name: "authSlice",
+  name: "dexSlice",
   initialState,
   reducers: {
-    removeToken: (state) => initialState,
-    updateToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
+    updateSettings: (state, action: PayloadAction<Settings>) => {
+      state.settings = action.payload;
+    },
+    setExcludeDeprecatedAssets: (state, action: PayloadAction<boolean>) => {
+      state.settings.excludeDeprecatedAssets = action.payload;
+    },
+    setExcludeCommunityAssets: (state, action: PayloadAction<boolean>) => {
+      state.settings.excludeCommunityAssets = action.payload;
     },
   },
 });
 
-export const { removeToken: remove, updateToken: update } = dexSlice.actions;
+export const {
+  updateSettings: update,
+  setExcludeDeprecatedAssets,
+  setExcludeCommunityAssets,
+} = dexSlice.actions;
 
-export const selectToken = (state: DexState) => state.token;
+export const selectSettings = (state: RootState) => state.dex.settings;
 
-export const authReducer = dexSlice.reducer;
+export const dexReducer = dexSlice.reducer;

@@ -7,6 +7,12 @@ export interface Asset {
   decimals: number;
   display_name: string;
   contract_address: string;
+  is_community: boolean;
+}
+
+export interface AssetsRequest {
+  exclude_deprecated?: boolean;
+  exclude_community?: boolean;
 }
 
 export interface Pool {

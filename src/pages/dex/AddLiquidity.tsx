@@ -122,17 +122,17 @@ export default function AddLiquidityPage() {
       token0_address: asset0?.contract_address ?? "",
       token1_address: asset1?.contract_address ?? "",
       token0_amount:
-        lastUpdated === "token0"
+        lastUpdated === "token0" && asset0
           ? new Coins(needsCompletion ? token0PoolBalance : token0Amount, {
-              decimals: asset0?.decimals,
+              decimals: asset0.decimals,
             })
               .toNano()
               .toString()
           : "0",
       token1_amount:
-        lastUpdated === "token1"
+        lastUpdated === "token1" && asset1
           ? new Coins(needsCompletion ? token1PoolBalance : token1Amount, {
-              decimals: asset1?.decimals,
+              decimals: asset1.decimals,
             })
               .toNano()
               .toString()
@@ -173,18 +173,18 @@ export default function AddLiquidityPage() {
   }, [token0Address, token1Address]);
 
   useEffect(() => {
-    if (!simulateData) {
+    if (!simulateData || !asset0 || !asset1) {
       return;
     }
 
     setToken0Amount(
       Number(
-        Coins.fromNano(simulateData.token0_amount, asset0?.decimals).toString()
+        Coins.fromNano(simulateData.token0_amount, asset0.decimals).toString()
       )
     );
     setToken1Amount(
       Number(
-        Coins.fromNano(simulateData.token1_amount, asset1?.decimals).toString()
+        Coins.fromNano(simulateData.token1_amount, asset1.decimals).toString()
       )
     );
     setShare(simulateData.estimated_share_of_pool);
@@ -218,7 +218,7 @@ export default function AddLiquidityPage() {
                   {wallet && (
                     <div className="text-end small fw-500 ms-auto color-grey">
                       {t("swap.balance")}{" "}
-                      {`${token0Balance.toString()} ${asset0?.symbol}`}
+                      {`${token0Balance.toString()} ${asset0?.symbol ?? ""}`}
                     </div>
                   )}
                 </Form.Label>
@@ -237,7 +237,7 @@ export default function AddLiquidityPage() {
                           "token0",
                           event.target.value || "0",
                           setValue,
-                          asset0?.decimals
+                          asset0?.decimals || 9
                         );
                         debouncedUpdateAmounts(
                           "token0",
@@ -256,7 +256,10 @@ export default function AddLiquidityPage() {
                     >
                       <img
                         className="rounded-circle"
-                        src={asset0?.image_url}
+                        src={
+                          asset0?.image_url ??
+                          "/static/assets/images/token/default-token-image.png"
+                        }
                         width="24"
                         height="24"
                         alt={asset0?.display_name}
@@ -265,8 +268,10 @@ export default function AddLiquidityPage() {
                             "/static/assets/images/token/default-token-image.png")
                         }
                       />
-                      <span className="mx-3 fw-500 text-uppercase">
-                        {asset0?.symbol}
+                      <span
+                        className={`mx-3 fw-500 ${asset0 && "text-uppercase"}`}
+                      >
+                        {asset0?.symbol ?? "Select"}
                       </span>
                       <i className="fa-solid fa-ellipsis-vertical" />
                     </Button>
@@ -278,7 +283,7 @@ export default function AddLiquidityPage() {
                   {wallet && (
                     <div className="text-end small fw-500 ms-auto color-grey">
                       {t("swap.balance")}{" "}
-                      {`${token1Balance.toString()} ${asset1?.symbol}`}
+                      {`${token1Balance.toString()} ${asset1?.symbol ?? ""}`}
                     </div>
                   )}
                 </Form.Label>
@@ -297,7 +302,7 @@ export default function AddLiquidityPage() {
                           "token1",
                           event.target.value || "0",
                           setValue,
-                          asset1?.decimals
+                          asset1?.decimals || 9
                         );
                         debouncedUpdateAmounts(
                           "token1",
@@ -316,17 +321,22 @@ export default function AddLiquidityPage() {
                     >
                       <img
                         className="rounded-circle"
-                        src={asset1?.image_url}
+                        src={
+                          asset1?.image_url ??
+                          "/static/assets/images/token/default-token-image.png"
+                        }
                         width="24"
                         height="24"
-                        alt={asset1?.display_name}
+                        alt={asset1?.display_name ?? ""}
                         onError={(e) =>
                           (e.currentTarget.src =
                             "/static/assets/images/token/default-token-image.png")
                         }
                       />
-                      <span className="mx-3 fw-500 text-uppercase">
-                        {asset1?.symbol}
+                      <span
+                        className={`mx-3 fw-500 ${asset1 && "text-uppercase"}`}
+                      >
+                        {asset1?.symbol ?? "Select"}
                       </span>
                       <i className="fa-solid fa-ellipsis-vertical" />
                     </Button>

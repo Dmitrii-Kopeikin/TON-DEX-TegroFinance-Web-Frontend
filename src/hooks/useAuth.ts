@@ -86,7 +86,6 @@ export function useAuth() {
     }
 
     if (!wallet) {
-      console.log("Hello error")
       removeTokenCookie();
 
       refreshPayload();

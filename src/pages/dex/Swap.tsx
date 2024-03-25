@@ -14,7 +14,6 @@ import { useSearchParams } from "react-router-dom";
 import { Coins } from "ton3-core";
 import { useDebounce } from "../../hooks/useDebounce";
 import { PriceImpact } from "./components/PriceImpact";
-import { useGetAssetsQuery } from "../../store/api/dexApiSlice";
 import { fieldNormalizer } from "../../utils/fieldNormalizer";
 import { SelectAssetModal } from "./components/modals/SelectAssetModal";
 import { ConfirmSwapModal } from "./components/modals/ConfirmSwap";
@@ -25,6 +24,7 @@ import { TonConnectCustomButton } from "./components/TonConnectCustomButton";
 import { useSimulateSwap } from "../../hooks/useSimulateSwap";
 import { usePairBalances } from "../../hooks/usePairBalances";
 import { useBalance } from "../../hooks/useBalance";
+import { useAssets } from "../../hooks/useAssets";
 
 export type SwapAction = "offer" | "ask";
 
@@ -38,7 +38,7 @@ export default function SwapPage() {
 
   const wallet = useTonWallet();
 
-  const { data: assets } = useGetAssetsQuery();
+  const { assets } = useAssets();
 
   const [searchParams] = useSearchParams();
   let from = searchParams.get("from");
@@ -135,6 +135,9 @@ export default function SwapPage() {
   }, [fromAssetKey, toAssetKey]);
 
   useEffect(() => {
+    if (!toAsset) {
+      return;
+    }
     setValue(
       "toAmount",
       new Coins(toAmount, { decimals: toAsset?.decimals }).toString()
@@ -142,6 +145,9 @@ export default function SwapPage() {
   }, [toAmount]);
 
   useEffect(() => {
+    if (!fromAsset) {
+      return;
+    }
     setValue(
       "fromAmount",
       new Coins(fromAmount, { decimals: fromAsset?.decimals }).toString()
@@ -191,16 +197,14 @@ export default function SwapPage() {
     }
 
     return tonBalance.gte(
-      new Coins(requiredAmount.toFixed(assets[TON_ADDRESS].decimals), {
-        decimals: assets[TON_ADDRESS].decimals,
-      }).add(
-        Coins.fromNano(simulateState.tonFeeUnits, assets[TON_ADDRESS].decimals)
-      )
+      new Coins(requiredAmount.toFixed(9), {
+        decimals: 9,
+      }).add(Coins.fromNano(simulateState.tonFeeUnits, 9))
     );
   };
 
   const isEnoughAssetBalance = (): boolean => {
-    if (!wallet || !assets) {
+    if (!wallet || !assets || !assets[fromAssetKey]) {
       return false;
     }
 
@@ -235,7 +239,7 @@ export default function SwapPage() {
                   {wallet && (
                     <div className="text-end small fw-500 ms-auto color-grey">
                       {t("swap.balance")} {fromAssetBalance.toString()}{" "}
-                      {fromAsset?.symbol}
+                      {fromAsset?.symbol ?? ""}
                     </div>
                   )}
                 </Form.Label>
@@ -253,7 +257,7 @@ export default function SwapPage() {
                           "fromAmount",
                           event.target.value || "0",
                           setValue,
-                          fromAsset?.decimals
+                          fromAsset?.decimals || 9
                         );
                         debouncedUpdateFromAmount(
                           parseFloat(event.target.value)
@@ -271,7 +275,7 @@ export default function SwapPage() {
                     >
                       <img
                         className="rounded-circle"
-                        src={fromAsset?.image_url}
+                        src={fromAsset?.image_url ?? "/static/assets/images/token/default-token-image.png"}
                         width="24"
                         height="24"
                         alt={fromAsset?.symbol}
@@ -280,8 +284,8 @@ export default function SwapPage() {
                             "/static/assets/images/token/default-token-image.png")
                         }
                       />
-                      <span className="mx-3 fw-500 text-uppercase">
-                        {fromAsset?.symbol}
+                      <span className={`mx-3 fw-500 ${fromAsset && "text-uppercase"}`}>
+                        {fromAsset?.symbol ?? "Select"}
                       </span>
                       <i className="fa-solid fa-ellipsis-vertical" />
                     </Button>
@@ -311,7 +315,7 @@ export default function SwapPage() {
                   {wallet && (
                     <div className="text-end small fw-500 ms-auto color-grey">
                       {t("swap.balance")} {toAssetBalance.toString()}{" "}
-                      {toAsset?.symbol}
+                      {toAsset?.symbol ?? ""}
                     </div>
                   )}
                 </Form.Label>
@@ -329,7 +333,7 @@ export default function SwapPage() {
                           "toAmount",
                           event.target.value || "0",
                           setValue,
-                          toAsset?.decimals
+                          toAsset?.decimals || 9
                         );
                         debouncedUpdateToAmount(parseFloat(event.target.value));
                       },
@@ -345,7 +349,7 @@ export default function SwapPage() {
                     >
                       <img
                         className="rounded-circle"
-                        src={toAsset?.image_url}
+                        src={toAsset?.image_url ?? "/static/assets/images/token/default-token-image.png"}
                         width="24"
                         height="24"
                         alt={toAsset?.symbol}
@@ -354,8 +358,8 @@ export default function SwapPage() {
                             "/static/assets/images/token/default-token-image.png")
                         }
                       />
-                      <span className="mx-3 fw-500 text-uppercase">
-                        {toAsset?.symbol}
+                      <span className={`mx-3 fw-500 ${toAsset && "text-uppercase"}`}>
+                        {toAsset?.symbol ?? "Select"}
                       </span>
                       <i className="fa-solid fa-ellipsis-vertical" />
                     </Button>
@@ -363,30 +367,34 @@ export default function SwapPage() {
                 </InputGroup>
               </Form.Group>
               <ListGroup className="list-unstyled bg-light p-3 rounded-8 mb-4">
-                <ListGroup.Item className="d-flex mb-2">
-                  <span className="me-auto fw-500">{t("swap.price")}</span>
-                  <span className="color-grey">
-                    {`${(realPrice ?? "0")
-                      .toFixed(fromAsset?.decimals)
-                      .slice(0, 15)} ${fromAsset?.symbol} ${t("swap.per")} 1 ${
-                      toAsset?.symbol
-                    }`}
-                  </span>
-                </ListGroup.Item>
+                {fromAsset && toAsset && (
+                  <ListGroup.Item className="d-flex mb-2">
+                    <span className="me-auto fw-500">{t("swap.price")}</span>
+                    <span className="color-grey">
+                      {`${(realPrice ?? "0")
+                        .toFixed(fromAsset?.decimals || 9)
+                        .slice(0, 15)} ${fromAsset?.symbol} ${t(
+                        "swap.per"
+                      )} 1 ${toAsset?.symbol}`}
+                    </span>
+                  </ListGroup.Item>
+                )}
                 <ListGroup.Item className="d-flex mb-2">
                   <span className="me-auto fw-500">
                     {t("swap.slippageTolerance")}
                   </span>
                   <span className="color-grey">{`${slippageTolerance}%`}</span>
                 </ListGroup.Item>
-                <ListGroup.Item className="d-flex mb-2">
-                  <span className="me-auto fw-500">
-                    {t("swap.minimumReceived")}
-                  </span>
-                  <span className="color-grey">
-                    {`${(minReceived ?? "0").toString()} ${toAsset?.symbol}`}
-                  </span>
-                </ListGroup.Item>
+                {toAsset && (
+                  <ListGroup.Item className="d-flex mb-2">
+                    <span className="me-auto fw-500">
+                      {t("swap.minimumReceived")}
+                    </span>
+                    <span className="color-grey">
+                      {`${(minReceived ?? "0").toString()} ${toAsset?.symbol}`}
+                    </span>
+                  </ListGroup.Item>
+                )}
                 <ListGroup.Item className="d-flex mb-2">
                   <span className="me-auto fw-500">
                     {t("swap.priceImpact")}
@@ -408,12 +416,14 @@ export default function SwapPage() {
                     TON
                   </span>
                 </ListGroup.Item>
-                <ListGroup.Item className="d-flex mb-2">
-                  <span className="me-auto fw-500">{t("swap.route")}</span>
-                  <span className="color-grey">
-                    {`${fromAsset?.symbol} > ${toAsset?.symbol}`}
-                  </span>
-                </ListGroup.Item>
+                {fromAsset && toAsset && (
+                  <ListGroup.Item className="d-flex mb-2">
+                    <span className="me-auto fw-500">{t("swap.route")}</span>
+                    <span className="color-grey">
+                      {`${fromAsset?.symbol} > ${toAsset?.symbol}`}
+                    </span>
+                  </ListGroup.Item>
+                )}
               </ListGroup>
               <>
                 {wallet ? (

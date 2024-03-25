@@ -2,11 +2,10 @@ import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Modal, Form, InputGroup } from "react-bootstrap";
 import { Asset, Pool } from "../../../../store/api/dexApiTypes";
-import {
-  useGetAssetsQuery,
-  useGetPoolsQuery,
-} from "../../../../store/api/dexApiSlice";
+import { useGetPoolsQuery } from "../../../../store/api/dexApiSlice";
 import { useTranslation } from "react-i18next";
+import { useAssets } from "../../../../hooks/useAssets";
+import { useBalances } from "../../../../hooks/useBalances";
 
 export type TokenModalProps = {
   currentAssetKey: string;
@@ -30,7 +29,8 @@ export function SelectAssetModal({
   const { register, watch } = useForm({ mode: "onChange" });
 
   const { data: pools } = useGetPoolsQuery();
-  const { data: assets } = useGetAssetsQuery();
+  const { assets } = useAssets();
+  const balances = useBalances();
 
   const search = useRef("");
   search.current = watch("search", "value");
@@ -99,9 +99,20 @@ export function SelectAssetModal({
         asset.display_name
           ?.toLowerCase()
           .includes(search.current.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(search.current.toLowerCase())
+        asset.symbol.toLowerCase().includes(search.current.toLowerCase()) ||
+        asset.contract_address
+          .toLowerCase()
+          .includes(search.current.toLowerCase())
     );
   }
+
+  displayAssets.sort((a, b) => {
+    return a.symbol === "TON"
+      ? -1
+      : b.symbol === "TON"
+      ? 1
+      : a.symbol?.localeCompare(b.symbol);
+  });
 
   const renderAsset = (asset: Asset) => {
     return (
@@ -118,6 +129,7 @@ export function SelectAssetModal({
           })}
         />
         <img
+          loading="lazy"
           className="token-form__img rounded-circle"
           src={asset.image_url}
           width={40}
@@ -128,10 +140,25 @@ export function SelectAssetModal({
               "/static/assets/images/token/default-token-image.png")
           }
         />
-        <div className="ms-3 me-auto">
-          <div className="token-form__symbol fw-500">{asset.symbol}</div>
+        <div className="ms-3 me-3 w-100">
+          <div className="d-flex justify-content-between">
+            <div className="token-form__symbol fw-500">
+              {asset.symbol}{" "}
+              <span className="text-muted">
+                {asset.is_community && "Community"}
+              </span>
+            </div>
+            <div>{balances[asset.contract_address]?.toString()}</div>
+          </div>
           <div className="token-form__name fs-12 color-grey">
-            {asset.display_name}
+            {asset.display_name}{" "}
+            <a
+              href={"https://tonviewer.com/" + asset.contract_address}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <i className="fa-solid fa-up-right-from-square ms-1"></i>
+            </a>
           </div>
         </div>
         <i className="fa-solid fa-angle-right me-2 color-grey" />

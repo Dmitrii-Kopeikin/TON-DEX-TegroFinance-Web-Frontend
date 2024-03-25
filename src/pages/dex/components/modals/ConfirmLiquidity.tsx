@@ -78,9 +78,6 @@ export function ConfirmLiquidityModal({
     decimals: asset1.decimals,
   }).sub(Coins.fromNano(token1PoolBalance ?? 0, asset1.decimals));
 
-  // console.log(token0ToCompleteAmount);
-  // console.log(token1ToCompleteAmount);
-
   const { data: provideTransactionData } = useProvideLiquidityQuery(
     {
       user_wallet_address: address,

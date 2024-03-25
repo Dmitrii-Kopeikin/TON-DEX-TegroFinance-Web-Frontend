@@ -5,6 +5,11 @@
   },
   "tokenSelect": {
     "selectToken": "Choose Token",
-    "searchPlaceholder": "Search by symbol or name..."
+    "searchPlaceholder": "Search by symbol, name or address..."
+  },
+  "settings": {
+    "assetsHeader": "Assets:",
+    "showCommunityAssets": "Show Community Assets",
+    "showDeprecatedAssets": "Show Deprecated Assets"
   }
 }

@@ -2,10 +2,8 @@ import { useTonAddress, useTonWallet } from "@tonconnect/ui-react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import {
-  useGetAssetsQuery,
-  useGetWalletPoolsQuery,
-} from "../../store/api/dexApiSlice";
+import { useAssets } from "../../hooks/useAssets";
+import { useGetWalletPoolsQuery } from "../../store/api/dexApiSlice";
 import Hints from "./components/Hints";
 import { LiquidityAccordionComponent } from "./components/LiquidityAccordeon";
 import { TonConnectCustomButton } from "./components/TonConnectCustomButton";
@@ -16,7 +14,7 @@ export default function LiquidityPage() {
   const wallet = useTonWallet();
   const address = useTonAddress();
 
-  const { data: assets } = useGetAssetsQuery();
+  const { assets } = useAssets();
   const { data: pools } = useGetWalletPoolsQuery(address?.toString() || "", {
     skip: address === "",
     pollingInterval: 1000 * 60,

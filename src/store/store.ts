@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { dexApiV1 } from "./api/dexApiSlice";
-import { authApiV1 } from "./api/authApiSlice";
-import { authReducer } from "./features/authSlice";
 import { accountApiV1 } from "./api/accountApiSlice";
+import { authApiV1 } from "./api/authApiSlice";
+import { dexApiV1 } from "./api/dexApiSlice";
+import { authReducer } from "./features/authSlice";
 import { themeReducer } from "./features/themeSlice";
-
+import { dexReducer } from "./features/dexSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +13,7 @@ export const store = configureStore({
     [accountApiV1.reducerPath]: accountApiV1.reducer,
     auth: authReducer,
     theme: themeReducer,
+    dex: dexReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

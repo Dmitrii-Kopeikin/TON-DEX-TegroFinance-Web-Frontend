@@ -5,6 +5,11 @@
   },
   "tokenSelect": {
     "selectToken": "Выберите токен",
-    "searchPlaceholder": "Поиск по названию или символу..."
+    "searchPlaceholder": "Поиск по названию, символу или адресу..."
+  },
+  "settings": {
+    "assetsHeader": "Токены:",
+    "showCommunityAssets": "Показывать Community токены",
+    "showDeprecatedAssets": "Показывать Deprecated токены"
   }
 }

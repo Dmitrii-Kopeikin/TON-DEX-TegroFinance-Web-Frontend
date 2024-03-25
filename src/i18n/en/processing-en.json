@@ -2,5 +2,9 @@
   "processing": {
     "processing": "Processing",
     "processingText": "Confirm this transaction \n In your wallet 🙂"
+  },
+  "checkModal": {
+    "title": "Processing Completed!",
+    "desc": "You can close the window now."
   }
 }

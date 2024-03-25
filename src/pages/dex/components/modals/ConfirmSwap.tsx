@@ -50,12 +50,10 @@ export function ConfirmSwapModal({
       minAskAmount: minReceived.toNano(),
     },
     {
-      skip: !wallet || !address || !showConfirmSwap,
+      skip: !wallet || !address || !showConfirmSwap || !fromAsset || !toAsset,
       refetchOnMountOrArgChange: true,
     }
   );
-
-  // console.log(transactionData);
 
   const handleConfirm = async () => {
     if (!wallet || !transactionData) {

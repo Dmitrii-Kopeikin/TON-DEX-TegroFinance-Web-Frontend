@@ -1,9 +1,10 @@
 import { useSearchParams } from "react-router-dom";
-import { useGetAssetsQuery, useGetPoolsQuery, useGetWalletPoolsQuery } from "../store/api/dexApiSlice";
+import { useGetPoolsQuery, useGetWalletPoolsQuery } from "../store/api/dexApiSlice";
 import { useEffect, useState } from "react";
 import { Pool, Asset } from "../store/api/dexApiTypes";
 import { usePairBalances } from "./usePairBalances";
 import { Coins } from "ton3-core";
+import { useAssets } from "./useAssets";
 
 const TON_ADDRESS = import.meta.env.VITE_TON_ADDRESS || "";
 const TEGRO_ADDRESS = import.meta.env.VITE_TEGRO_ADDRESS || "";
@@ -26,9 +27,7 @@ export interface RouteAssets {
 
 export const useRouteAssets = (): RouteAssets => {
 
-  const { data: assets } = useGetAssetsQuery(undefined, {
-    pollingInterval: 1000 * 60 * 10,
-  });
+  const { assets } = useAssets();
   const { data: pools } = useGetPoolsQuery(undefined, {
     pollingInterval: 1000 * 60 * 10,
   });
