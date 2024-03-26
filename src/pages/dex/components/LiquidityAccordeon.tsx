@@ -34,12 +34,13 @@ export function LiquidityAccordionComponent({
         asset1.decimals
       )
     : Coins.fromNano(0, 9);
-
+  
+  console.log(pool)
   const token0Balance = asset0
-    ? Coins.fromNano(pool.token0_balance, asset0.decimals).toString()
+    ? Coins.fromNano(pool.token0_balance ?? 0, asset0.decimals).toString()
     : "0";
   const token1Balance = asset1
-    ? Coins.fromNano(pool.token1_balance, asset1.decimals).toString()
+    ? Coins.fromNano(pool.token1_balance ?? 0, asset1.decimals).toString()
     : "0";
 
   const needsCompletion = token0Balance !== "0" || token1Balance !== "0";
