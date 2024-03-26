@@ -35,7 +35,6 @@ export function LiquidityAccordionComponent({
       )
     : Coins.fromNano(0, 9);
   
-  console.log(pool)
   const token0Balance = asset0
     ? Coins.fromNano(pool.token0_balance ?? 0, asset0.decimals).toString()
     : "0";
