@@ -8,16 +8,14 @@
       "liquidity": "Liquidity"
     },
 
-    "wallet": {
-      "wallet": "Wallet",
-      "webWallet": "Web Wallet",
-      "webWalletDesc": "The easiest way to store, send, and receive Toncoin",
-      "androidApp": "Android App",
-      "androidAppDesc": "Wallet extension for Android",
-      "chromeApp": "Chrome App",
-      "chromeAppDesc": "Wallet extension for Chrome browser",
-      "edgeApp": "Microsoft Edge",
-      "edgeAppDesc": "Wallet extension for Edge browser"
+    "apps": {
+      "apps": "Apps",
+      "androidApp": "Google Play Android App",
+      "androidAppDesc": "Application for Android",
+      "rustoreApp": "Rustore Android App",
+      "rustoreAppDesc": "Application for Android",
+      "telegramBot": "Telegram",
+      "telegramBotDesc": "Telegram bot"
     },
 
     "e-commerce": {
@@ -34,13 +32,6 @@
       "allDocumentationDesc": "All ways of integration and interaction",
       "addingStore": "Adding a store",
       "apiDocumentation": "API documentation"
-    },
-
-    "nft": {
-      "nft": "NFT",
-      "libermallDesc": "A new, modern and slick NFT marketplace",
-      "exploreCollections": "Explore collections",
-      "exploreCollectionsDesc": "Catalog of NFT collections"
     },
 
     "more": {

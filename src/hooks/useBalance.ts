@@ -1,7 +1,7 @@
 import { useTonAddress, useTonWallet } from "@tonconnect/ui-react";
 import { Coins } from "ton3-core";
 import { useGetBalancesQuery } from "../store/api/dexApiSlice";
-import { useAssets } from "./useAssets";
+import { useBalances } from "./useBalances"
 
 const TON_ADDRESS: string = import.meta.env.VITE_TON_ADDRESS;
 const TGR_ADDRESS: string = import.meta.env.VITE_TEGRO_ADDRESS;
@@ -15,14 +15,11 @@ export const useBalance = () => {
   const wallet = useTonWallet();
   const walletAddress = useTonAddress();
 
-  const { assets } = useAssets();
+  // const { assets } = useAssets();
 
-  const { data: balances } = useGetBalancesQuery(walletAddress, {
-    pollingInterval: 1000 * 20,
-    skip: !wallet,
-  });
+  const balances = useBalances();
 
-  if (!balances || !assets) {
+  if (!balances) {
     return {
       tonBalance: Coins.fromNano(0, 9),
       tgrBalance: Coins.fromNano(0, 9),
@@ -30,7 +27,7 @@ export const useBalance = () => {
   }
 
   return {
-    tonBalance: Coins.fromNano(balances[TON_ADDRESS] ?? 0, 9),
-    tgrBalance: Coins.fromNano(balances[TGR_ADDRESS] ?? 0, 9),
+    tonBalance: balances[TON_ADDRESS] ?? Coins.fromNano(0,9),
+    tgrBalance: balances[TGR_ADDRESS] ?? Coins.fromNano(0,9),
   };
 };

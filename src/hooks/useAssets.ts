@@ -8,6 +8,8 @@ export const useAssets = () => {
   const { data: assets } = useGetAssetsQuery({
     exclude_deprecated: dexSettings.excludeDeprecatedAssets,
     exclude_community: dexSettings.excludeCommunityAssets,
+  }, {
+    selectFromResult: ({data}) => ({data: data ?? null}),
   });
 
   return {

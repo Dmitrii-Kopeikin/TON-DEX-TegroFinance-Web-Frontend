@@ -117,23 +117,33 @@ export default function AddLiquidityPage() {
   setValue("token0", token0Amount);
   setValue("token1", token1Amount);
 
-  const { data: simulateData, isLoading } = useSimulateAddLiquidityQuery(
+  const { data: simulateData } = useSimulateAddLiquidityQuery(
     {
       token0_address: asset0?.contract_address ?? "",
       token1_address: asset1?.contract_address ?? "",
       token0_amount:
         lastUpdated === "token0" && asset0
-          ? new Coins(needsCompletion ? token0PoolBalance : token0Amount, {
-              decimals: asset0.decimals,
-            })
+          ? new Coins(
+              needsCompletion
+                ? token0PoolBalance
+                : token0Amount.toFixed(asset0.decimals),
+              {
+                decimals: asset0.decimals,
+              }
+            )
               .toNano()
               .toString()
           : "0",
       token1_amount:
         lastUpdated === "token1" && asset1
-          ? new Coins(needsCompletion ? token1PoolBalance : token1Amount, {
-              decimals: asset1.decimals,
-            })
+          ? new Coins(
+              needsCompletion
+                ? token1PoolBalance
+                : token1Amount.toFixed(asset1.decimals),
+              {
+                decimals: asset1.decimals,
+              }
+            )
               .toNano()
               .toString()
           : "0",
@@ -147,6 +157,7 @@ export default function AddLiquidityPage() {
         !asset1 ||
         (token0Amount === 0 && token1Amount === 0 && !needsCompletion),
       pollingInterval: 10000,
+      selectFromResult: ({ data }) => ({ data: data ?? null }),
     }
   );
 
@@ -201,9 +212,6 @@ export default function AddLiquidityPage() {
               className="d-flex align-items-center mb-0 mt-2"
               style={{ padding: "20px 24px 20px 24px" }}
             >
-              {/* <Button variant="icon p-2" onClick={go_back} className="me-2">
-                <i className="fa-regular fa-arrow-left" />
-              </Button> */}
               <Card.Title className="card-title fs-24 fw-700 me-auto">
                 {t("liquidity.addLiquidity")}
               </Card.Title>
@@ -241,7 +249,7 @@ export default function AddLiquidityPage() {
                         );
                         debouncedUpdateAmounts(
                           "token0",
-                          parseFloat(event.target.value)
+                          parseFloat(event.target.value) || 0
                         );
                       },
                       validate: (value) => value && parseFloat(value) > 0,
@@ -306,7 +314,7 @@ export default function AddLiquidityPage() {
                         );
                         debouncedUpdateAmounts(
                           "token1",
-                          parseFloat(event.target.value)
+                          parseFloat(event.target.value) || 0
                         );
                       },
                       validate: (value) => value && parseFloat(value) > 0,
@@ -392,7 +400,7 @@ export default function AddLiquidityPage() {
               )}
 
               {wallet ? (
-                isLoading ? (
+                !simulateData ? (
                   <div className="btn btn-red text-center fs-16 w-100 rounded-8 disabled">
                     Loading...
                   </div>
@@ -439,7 +447,7 @@ export default function AddLiquidityPage() {
         currentAssetKey={token0Address}
         setCurrentAsset={setToken0Address}
         otherCurrentAssetKey={token1Address}
-        setOtherCurrentAsset={setToken1Address}
+        setOtherAsset={setToken1Address}
         isFromModal={true}
         modalId={fromAssetModalId}
       />

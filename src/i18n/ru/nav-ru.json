@@ -8,16 +8,14 @@
       "liquidity": "Ликвидность"
     },
 
-    "wallet": {
-      "wallet": "Кошелек",
-      "webWallet": "Веб-кошелек",
-      "webWalletDesc": "Самый простой способ хранить, отправлять и получать Toncoin",
-      "androidApp": "Android-приложение",
-      "androidAppDesc": "Расширение кошелька для Android",
-      "chromeApp": "Chrome-приложение",
-      "chromeAppDesc": "Расширение кошелька для браузера Chrome",
-      "edgeApp": "Microsoft Edge",
-      "edgeAppDesc": "Расширение кошелька для браузера Edge"
+    "apps": {
+      "apps": "Приложения",
+      "androidApp": "Google Play",
+      "androidAppDesc": "Приложение для Android",
+      "rustoreApp": "Rustore",
+      "rustoreAppDesc": "Приложение для Android",
+      "telegramBot": "Telegram",
+      "telegramBotDesc": "Бот в Telegram"
     },
 
     "e-commerce": {
@@ -34,13 +32,6 @@
       "allDocumentationDesc": "Все способы интеграции и взаимодействия",
       "addingStore": "Добавление магазина",
       "apiDocumentation": "Документация по API"
-    },
-
-    "nft": {
-      "nft": "NFT",
-      "libermallDesc": "Новый, современный и стильный маркетплейс NFT",
-      "exploreCollections": "Исследовать коллекции",
-      "exploreCollectionsDesc": "Каталог коллекций NFT"
     },
 
     "more": {

@@ -43,7 +43,7 @@ export default defineConfig({
       },
     },
     commonjsOptions: {
-      transformMixedEsModules: true, // fuck this
+      transformMixedEsModules: true,
     },
   },
 });

@@ -2,6 +2,7 @@ import { useTonAddress, useTonWallet } from "@tonconnect/ui-react";
 import { Coins } from "ton3-core";
 import { useGetBalancesQuery } from "../store/api/dexApiSlice";
 import { useAssets } from "./useAssets";
+import { useBalances } from "./useBalances";
 
 export interface PairData {
   token0Address?: string;
@@ -14,15 +15,10 @@ export interface usePairBalancesData {
 }
 
 export const usePairBalances = (data: PairData) => {
-  const wallet = useTonWallet();
-  const walletAddress = useTonAddress();
 
   const { assets } = useAssets();
 
-  const { data: balances } = useGetBalancesQuery(walletAddress, {
-    pollingInterval: 1000 * 20,
-    skip: !wallet,
-  });
+  const balances = useBalances();
 
   if (
     !data.token0Address ||
@@ -38,14 +34,8 @@ export const usePairBalances = (data: PairData) => {
     };
   }
 
-  const token0Balance = Coins.fromNano(
-    balances[data.token0Address] ?? 0,
-    assets[data.token0Address].decimals
-  );
-  const token1Balance = Coins.fromNano(
-    balances[data.token1Address] ?? 0,
-    assets[data.token1Address].decimals
-  );
+  const token0Balance = balances[data.token0Address] ?? Coins.fromNano(0, assets[data.token0Address].decimals);
+  const token1Balance = balances[data.token1Address] ?? Coins.fromNano(0, assets[data.token1Address].decimals);
 
   return {
     token0Balance,

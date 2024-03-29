@@ -60,6 +60,7 @@ export function ConfirmLiquidityModal({
     token1Address: asset1.contract_address,
   });
   const { tonBalance } = useBalance();
+  console.log(tonBalance);
 
   const [showConfirmStake, setShowConfirmStake] = useState(false);
 
@@ -71,12 +72,18 @@ export function ConfirmLiquidityModal({
       ? [pool?.token0_balance, pool?.token1_balance]
       : [pool?.token1_balance, pool?.token0_balance];
 
-  const token0ToCompleteAmount = new Coins(token0Amount, {
-    decimals: asset0.decimals,
-  }).sub(Coins.fromNano(token0PoolBalance ?? 0, asset0.decimals));
-  const token1ToCompleteAmount = new Coins(token1Amount, {
-    decimals: asset1.decimals,
-  }).sub(Coins.fromNano(token1PoolBalance ?? 0, asset1.decimals));
+  const token0ToCompleteAmount = new Coins(
+    token0Amount.toFixed(asset0.decimals),
+    {
+      decimals: asset0.decimals,
+    }
+  ).sub(Coins.fromNano(token0PoolBalance ?? 0, asset0.decimals));
+  const token1ToCompleteAmount = new Coins(
+    token1Amount.toFixed(asset1.decimals),
+    {
+      decimals: asset1.decimals,
+    }
+  ).sub(Coins.fromNano(token1PoolBalance ?? 0, asset1.decimals));
 
   const { data: provideTransactionData } = useProvideLiquidityQuery(
     {
@@ -200,10 +207,14 @@ export function ConfirmLiquidityModal({
       })
     );
     const enoughToken0Balance = token0Balance.gte(
-      new Coins(token0Amount, { decimals: asset0.decimals })
+      new Coins(token0Amount.toFixed(asset0.decimals), {
+        decimals: asset0.decimals,
+      })
     );
     const enoughToken1Balance = token1Balance.gte(
-      new Coins(token1Amount, { decimals: asset1.decimals })
+      new Coins(token1Amount.toFixed(asset1.decimals), {
+        decimals: asset1.decimals,
+      })
     );
 
     if (needsActivation) return enoughTonBalance;

@@ -1,178 +1,116 @@
 import { useRef } from "react";
+import { Form, InputGroup, Modal } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 import { useForm } from "react-hook-form";
-import { Modal, Form, InputGroup } from "react-bootstrap";
-import { Asset, Pool } from "../../../../store/api/dexApiTypes";
-import { useGetPoolsQuery } from "../../../../store/api/dexApiSlice";
 import { useTranslation } from "react-i18next";
+import { FixedSizeList } from "react-window";
 import { useAssets } from "../../../../hooks/useAssets";
 import { useBalances } from "../../../../hooks/useBalances";
+import { useGetAllPoolsPairsQuery } from "../../../../store/api/dexApiSlice";
+import { Asset, PoolPair } from "../../../../store/api/dexApiTypes";
+import { AssetRow } from "../AssetRow";
 
 export type TokenModalProps = {
-  currentAssetKey: string;
-  setCurrentAsset: (x: string) => void;
+  setCurrentAssetKey: (x: string) => void;
   otherCurrentAssetKey: string;
-  setOtherCurrentAsset?: (x: string) => void;
+  setOtherAssetKey?: (x: string) => void;
   isFromModal?: boolean;
   modalId: string;
 };
 
 export function SelectAssetModal({
-  currentAssetKey,
-  setCurrentAsset,
+  setCurrentAssetKey,
+  setOtherAssetKey,
   otherCurrentAssetKey,
-  setOtherCurrentAsset,
   isFromModal = false,
   modalId,
 }: TokenModalProps) {
   const { t } = useTranslation();
 
-  const { register, watch } = useForm({ mode: "onChange" });
+  const { register, watch, setValue } = useForm({ mode: "onChange" });
 
-  const { data: pools } = useGetPoolsQuery();
+  const { data: poolsPairs } = useGetAllPoolsPairsQuery(undefined, {
+    selectFromResult: ({ data }) => ({ data: data ?? null }),
+  });
+
   const { assets } = useAssets();
   const balances = useBalances();
 
   const search = useRef("");
   search.current = watch("search", "value");
 
-  const changeSelected = async (assetContractAddress: string) => {
-    setCurrentAsset(assetContractAddress);
+  const poolsPairsMap = new Map<string, Map<string, PoolPair>>();
+  for (const poolPair of poolsPairs || []) {
+    if (!poolsPairsMap.has(poolPair.token0_address)) {
+      poolsPairsMap.set(poolPair.token0_address, new Map());
+    }
+    if (!poolsPairsMap.has(poolPair.token1_address)) {
+      poolsPairsMap.set(poolPair.token1_address, new Map());
+    }
+    poolsPairsMap.get(poolPair.token0_address)?.set(poolPair.token1_address, poolPair);
+    poolsPairsMap.get(poolPair.token1_address)?.set(poolPair.token0_address, poolPair);
+  }
+
+  const displayAssets: Asset[] = [];
+
+  for (const asset_key in assets) {
+    const asset = assets[asset_key];
+    if (!isFromModal && asset.contract_address === otherCurrentAssetKey) {
+      continue;
+    }
+
     if (
-      !poolByAssetsAddressesHashMap
-        ?.get(assetContractAddress)
-        ?.has(otherCurrentAssetKey) &&
-      setOtherCurrentAsset
+      (isFromModal ||
+        (poolsPairsMap.has(asset_key) && isFromModal) ||
+        poolsPairsMap.get(asset_key)?.has(otherCurrentAssetKey)) &&
+      (!search.current ||
+        asset.display_name?.toLowerCase().includes(search.current.toLowerCase()) ||
+        asset.symbol.toLowerCase().includes(search.current.toLowerCase()) ||
+        asset.contract_address.toLowerCase().includes(search.current.toLowerCase()))
     ) {
-      for (const assetKey in assets) {
+      displayAssets.push(asset);
+    }
+  }
+
+  displayAssets.sort((a, b) => {
+    return a.symbol === "TON" ? -1 : b.symbol === "TON" ? 1 : a.symbol?.localeCompare(b.symbol);
+  });
+
+  const changeSelected = async (assetContractAddress: string) => {
+    setCurrentAssetKey(assetContractAddress);
+    setValue("search", "");
+    if (
+      isFromModal &&
+      setOtherAssetKey &&
+      !poolsPairsMap.get(assetContractAddress)?.has(otherCurrentAssetKey)
+    ) {
+      for (const asset of displayAssets) {
         if (
-          poolByAssetsAddressesHashMap
-            .get(assetContractAddress)
-            ?.has(assetKey) &&
-          isFromModal
+          poolsPairsMap.get(assetContractAddress)?.has(asset.contract_address) &&
+          asset.contract_address !== assetContractAddress
         ) {
-          setOtherCurrentAsset(assetKey);
+          setOtherAssetKey(asset.contract_address);
           break;
         }
       }
     }
   };
 
-  const poolByAssetsAddressesHashMap = new Map<string, Map<string, Pool>>();
-  for (const pool of pools || []) {
-    if (!poolByAssetsAddressesHashMap.has(pool.token0_address)) {
-      poolByAssetsAddressesHashMap.set(pool.token0_address, new Map());
-    }
-    if (!poolByAssetsAddressesHashMap.has(pool.token1_address)) {
-      poolByAssetsAddressesHashMap.set(pool.token1_address, new Map());
-    }
-    poolByAssetsAddressesHashMap
-      .get(pool.token0_address)
-      ?.set(pool.token1_address, pool);
-    poolByAssetsAddressesHashMap
-      .get(pool.token1_address)
-      ?.set(pool.token0_address, pool);
-  }
-
-  let displayAssets: Asset[] = [];
-
-  if (isFromModal) {
-    displayAssets = Object.values(assets ?? {});
-  } else {
-    for (const asset_key in assets) {
-      const asset = assets[asset_key];
-      if (asset.contract_address === otherCurrentAssetKey) {
-        continue;
-      }
-
-      if (
-        (poolByAssetsAddressesHashMap.has(asset_key) && isFromModal) ||
-        poolByAssetsAddressesHashMap.get(asset_key)?.has(otherCurrentAssetKey)
-      ) {
-        displayAssets.push(asset);
-      }
-    }
-  }
-
-  if (search.current) {
-    displayAssets = displayAssets.filter(
-      (asset) =>
-        asset.display_name
-          ?.toLowerCase()
-          .includes(search.current.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(search.current.toLowerCase()) ||
-        asset.contract_address
-          .toLowerCase()
-          .includes(search.current.toLowerCase())
-    );
-  }
-
-  displayAssets.sort((a, b) => {
-    return a.symbol === "TON"
-      ? -1
-      : b.symbol === "TON"
-      ? 1
-      : a.symbol?.localeCompare(b.symbol);
-  });
-
-  const renderAsset = (asset: Asset) => {
+  const Row = ({ data, index, style }: any) => {
     return (
-      <Form.Label
-        className={"d-flex align-items-center hover rounded-8 px-2 py-3"}
-        data-bs-dismiss="modal"
-        key={asset.contract_address}
-      >
-        <input
-          type="checkbox"
-          style={{ display: "none" }}
-          {...register(asset.contract_address, {
-            onChange: (event) => changeSelected(asset.contract_address),
-          })}
-        />
-        <img
-          loading="lazy"
-          className="token-form__img rounded-circle"
-          src={asset.image_url}
-          width={40}
-          height={40}
-          alt={asset.symbol}
-          onError={(e) =>
-            (e.currentTarget.src =
-              "/static/assets/images/token/default-token-image.png")
-          }
-        />
-        <div className="ms-3 me-3 w-100">
-          <div className="d-flex justify-content-between">
-            <div className="token-form__symbol fw-500">
-              {asset.symbol}{" "}
-              <span className="text-muted">
-                {asset.is_community && "Community"}
-              </span>
-            </div>
-            <div>{balances[asset.contract_address]?.toString()}</div>
-          </div>
-          <div className="token-form__name fs-12 color-grey">
-            {asset.display_name}{" "}
-            <a
-              href={"https://tonviewer.com/" + asset.contract_address}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="fa-solid fa-up-right-from-square ms-1"></i>
-            </a>
-          </div>
-        </div>
-        <i className="fa-solid fa-angle-right me-2 color-grey" />
-      </Form.Label>
+      <AssetRow
+        style={style}
+        key={index}
+        asset={data[index]}
+        changeSelected={changeSelected}
+        balances={balances}
+        register={register}
+      />
     );
   };
 
   return (
-    <div
-      className="modal fade mobile-modal-bottom"
-      id={modalId}
-      tabIndex={-1}
-      aria-hidden="true"
-    >
+    <div className="modal fade mobile-modal-bottom" id={modalId} tabIndex={-1} aria-hidden="true">
       <Modal.Dialog centered contentClassName="p-2">
         <Modal.Header data-bs-dismiss="modal" aria-label="Close" closeButton>
           <Modal.Title>{t("tokenSelect.selectToken")}</Modal.Title>
@@ -193,11 +131,26 @@ export function SelectAssetModal({
             </InputGroup>
             <div
               className="token-form__list overflow-auto"
-              style={{ maxHeight: "408px" }}
+              style={{ minHeight: "100px", maxHeight: "408px" }}
             >
-              {Object.values(displayAssets || {}).map((asset) => {
-                return renderAsset(asset);
-              })}
+              {assets ? (
+                <FixedSizeList
+                  className="overflow-auto"
+                  height={400}
+                  width="100%"
+                  itemSize={60}
+                  itemCount={displayAssets.length}
+                  itemData={displayAssets}
+                >
+                  {Row}
+                </FixedSizeList>
+              ) : (
+                <div className="d-flex justify-content-center align-items-center mt-auto mb-auto">
+                  <Spinner className="m-auto" animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              )}
             </div>
           </Form>
         </Modal.Body>

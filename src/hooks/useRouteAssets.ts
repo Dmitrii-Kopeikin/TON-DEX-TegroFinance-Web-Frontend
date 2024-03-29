@@ -20,7 +20,7 @@ export interface RouteAssets {
   setToken0Amount: (value: number) => void;
   token1Amount: number;
   setToken1Amount: (value: number) => void;
-  assets: { [key: string]: Asset } | undefined;
+  assets: { [key: string]: Asset } | null;
   pools: Pool[] | undefined;
   poolByAssetsAddressesHashMap: Map<string, Map<string, Pool>>;
 }
@@ -30,6 +30,7 @@ export const useRouteAssets = (): RouteAssets => {
   const { assets } = useAssets();
   const { data: pools } = useGetPoolsQuery(undefined, {
     pollingInterval: 1000 * 60 * 10,
+    selectFromResult: ({data}) => ({data: data ?? []}),
   });
 
   const [searchParams] = useSearchParams();

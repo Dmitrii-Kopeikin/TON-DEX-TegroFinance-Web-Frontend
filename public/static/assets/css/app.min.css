@@ -1638,3 +1638,12 @@ h3 {
   box-shadow: none;
   padding: 16px 32px;
 }
+.long-text-hidden {
+  cursor: default;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.token-form__name {
+  display: flex;
+}

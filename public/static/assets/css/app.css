@@ -1744,6 +1744,9 @@ h3 {
 .token-form__item {
   border-bottom: 1px solid var(--bg-primary);
 }
+.token-form__name {
+  display: flex;
+}
 
 .token-form__item:last-child {
   border: 0;
@@ -1949,4 +1952,11 @@ h3 {
   border: 0;
   box-shadow: none;
   padding: 16px 32px;
+}
+
+.long-text-hidden {
+  cursor: default;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

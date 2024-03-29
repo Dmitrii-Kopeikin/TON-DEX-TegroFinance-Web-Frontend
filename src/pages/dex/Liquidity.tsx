@@ -1,5 +1,5 @@
 import { useTonAddress, useTonWallet } from "@tonconnect/ui-react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useAssets } from "../../hooks/useAssets";
@@ -15,16 +15,15 @@ export default function LiquidityPage() {
   const address = useTonAddress();
 
   const { assets } = useAssets();
-  const { data: pools } = useGetWalletPoolsQuery(address?.toString() || "", {
+  const { data: pools, isLoading } = useGetWalletPoolsQuery(address?.toString() || "", {
     skip: address === "",
     pollingInterval: 1000 * 60,
+    selectFromResult: ({ data, isLoading }) => ({ data: data ?? null, isLoading }),
   });
 
   const poolsWithLpBalance = pools?.filter(
     (pool) =>
-      (pool.lp_balance && pool.lp_balance > 0) ||
-      pool.token0_balance > 0 ||
-      pool.token1_balance > 0
+      (pool.lp_balance && pool.lp_balance > 0) || pool.token0_balance > 0 || pool.token1_balance > 0
   );
 
   return (
@@ -58,10 +57,15 @@ export default function LiquidityPage() {
             </Card.Header>
             <Form className="p-4 pt-0">
               <h2 className="card-title fs-24 fw-700 me-auto mb-2"></h2>
-              {wallet &&
-              assets &&
-              poolsWithLpBalance &&
-              poolsWithLpBalance.length > 0 ? (
+              {wallet && isLoading ? (
+                <div className="bg-light text-center rounded-8 p-5 my-4">
+                  <i className="fa-light fa-cloud-arrow-down fa-4x mb-4 color-blue" />
+                  <p className="text-muted fs-16 mb-0">{t("liquidity.yourActivePositions")}</p>
+                  <Spinner className="m-auto mt-4" animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              ) : wallet && assets && poolsWithLpBalance && poolsWithLpBalance.length > 0 ? (
                 poolsWithLpBalance.map((pool) => {
                   const key = pool.address;
                   return (
@@ -76,18 +80,13 @@ export default function LiquidityPage() {
               ) : (
                 <div className="bg-light text-center rounded-8 p-5 my-4">
                   <i className="fa-light fa-cloud-arrow-down fa-4x mb-4 color-blue" />
-                  <p className="text-muted fs-16 mb-0">
-                    {t("liquidity.yourActivePositions")}
-                  </p>
+                  <p className="text-muted fs-16 mb-0">{t("liquidity.yourActivePositions")}</p>
                 </div>
               )}
               {!wallet ? (
                 <TonConnectCustomButton />
               ) : (
-                <Link
-                  to="/liquidity/provide"
-                  className="btn btn-red fs-16 w-100"
-                >
+                <Link to="/liquidity/provide" className="btn btn-red fs-16 w-100">
                   <i className="fa-regular fa-money-bill-transfer me-3" />
                   {t("liquidity.addLiquidity")}
                 </Link>

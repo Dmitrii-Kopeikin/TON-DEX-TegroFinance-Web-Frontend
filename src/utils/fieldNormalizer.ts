@@ -24,6 +24,11 @@ export const fieldNormalizer = (
         normValue.split(".")[1].slice(0, maxDecimals);
     }
   }
+  if (Number.isNaN(normValue)) {
+    normValue = "0";
+  }
 
-  set(fieldName, normValue);
+  if (fieldValue !== normValue) {
+    set(fieldName, normValue);
+  }
 };

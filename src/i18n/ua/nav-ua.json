@@ -8,16 +8,14 @@
       "liquidity": "Ліквідність"
     },
 
-    "wallet": {
-      "wallet": "Гаманець",
-      "webWallet": "Веб-гаманець",
-      "webWalletDesc": "Найпростіший спосіб зберігати, відправляти та отримувати Toncoin",
-      "androidApp": "Android-додаток",
-      "androidAppDesc": "Розширення гаманця для Android",
-      "chromeApp": "Chrome-додаток",
-      "chromeAppDesc": "Розширення гаманця для браузера Chrome",
-      "edgeApp": "Microsoft Edge",
-      "edgeAppDesc": "Розширення гаманця для браузера Edge"
+    "apps": {
+      "apps": "Програми",
+      "androidApp": "Google Play",
+      "androidAppDesc": "Програма для Android",
+      "rustoreApp": "Rustore",
+      "rustoreAppDesc": "Програма для Android",
+      "telegramBot": "Telegram",
+      "telegramBotDesc": "Бот в Telegram"
     },
 
     "e-commerce": {
@@ -34,13 +32,6 @@
       "allDocumentationDesc": "Усі способи інтеграції та взаємодії",
       "addingStore": "Додавання магазину",
       "apiDocumentation": "Документація по API"
-    },
-
-    "nft": {
-      "nft": "NFT",
-      "libermallDesc": "Новий, сучасний та стильний маркетплейс NFT",
-      "exploreCollections": "Досліджуйте колекції",
-      "exploreCollectionsDesc": "Каталог колекцій NFT"
     },
 
     "more": {

@@ -13,6 +13,7 @@ export const useBalances = () => {
 
   const { data: balances } = useGetBalancesQuery(walletAddress, {
     pollingInterval: 1000 * 20,
+    selectFromResult: ({data}) => ({data: data ?? {}}),
     skip: !wallet,
   });
 

@@ -94,61 +94,48 @@ export function DefaultHeader() {
                   <NavDropdown
                     title={
                       <>
-                        {t("navigation.wallet.wallet")}{" "}
+                        {t("navigation.apps.apps")}{" "}
                         <i className="fa-solid fa-angle-down small ms-auto ms-lg-2" />
                       </>
                     }
                     id="collapsible-nav-dropdown"
                   >
                     <NavDropdown.Item
-                      href="https://tegro.io/wallet/"
-                      target="_blank"
                       className="d-flex"
+                      href="https://play.google.com/store/apps/details?id=com.tergofinanceall.financetergo"
+                      target="_blank"
                     >
-                      <i className="fa-light fa-wallet dropdown-item-icon" />
+                      <i className="fa-brands fa-google-play dropdown-item-icon mt-2" />
                       <div className="ms-3">
-                        {t("navigation.wallet.webWallet")}
+                        {t("navigation.apps.androidApp")}
                         <div className="text-muted small">
-                          {t("navigation.wallet.webWalletDesc")}
+                          {t("navigation.apps.androidAppDesc")}
                         </div>
                       </div>
                     </NavDropdown.Item>
                     <NavDropdown.Item
                       className="d-flex"
-                      href="https://play.google.com/store/apps/details?id=com.tonholdwallet.android"
+                      href="https://apps.rustore.ru/app/com.tergofinanceall.financetergo"
                       target="_blank"
                     >
-                      <i className="fa-brands fa-google-play dropdown-item-icon" />
+                      <i className="fa-brands fa-android dropdown-item-icon mt-2" />
                       <div className="ms-3">
-                        {t("navigation.wallet.androidApp")}
+                        {t("navigation.apps.rustoreApp")}
                         <div className="text-muted small">
-                          {t("navigation.wallet.androidAppDesc")}
+                          {t("navigation.apps.rustoreAppDesc")}
                         </div>
                       </div>
                     </NavDropdown.Item>
                     <NavDropdown.Item
                       className="d-flex"
-                      href="https://chrome.google.com/webstore/detail/cdpdjfhimjdmbakdbabcklagceoikifg"
+                      href="https://t.me/TegroMoneyBot"
                       target="_blank"
                     >
-                      <i className="fa-brands fa-chrome dropdown-item-icon" />
+                      <i className="fa-brands fa-telegram dropdown-item-icon mt-2" />
                       <div className="ms-3">
-                        {t("navigation.wallet.chromeApp")}
+                        {t("navigation.apps.telegramBot")}
                         <div className="text-muted small">
-                          {t("navigation.wallet.chromeAppDesc")}
-                        </div>
-                      </div>
-                    </NavDropdown.Item>
-                    <NavDropdown.Item
-                      className="d-flex"
-                      href="https://microsoftedge.microsoft.com/addons/detail/dgegbhgbijbhkmkacomdlogdkacokpam"
-                      target="_blank"
-                    >
-                      <i className="fa-brands fa-edge dropdown-item-icon" />
-                      <div className="ms-3">
-                        {t("navigation.wallet.edgeApp")}
-                        <div className="text-muted small">
-                          {t("navigation.wallet.edgeAppDesc")}
+                          {t("navigation.apps.telegramBotDesc")}
                         </div>
                       </div>
                     </NavDropdown.Item>
@@ -178,20 +165,6 @@ export function DefaultHeader() {
                     <NavDropdown.Item className="p-3 fs-14 fw-medium text-muted  bg-transparent">
                       {t("navigation.e-commerce.forBusiness")}
                     </NavDropdown.Item>
-                    {/* <NavDropdown.Item
-                      className="d-flex"
-                      href="https://tegro.money/referral-program/"
-                      target="_blank"
-                    >
-                      <i className="fa-light fa-handshake dropdown-item-icon" />
-                      <div className="ms-3">
-                        {t("navigation.e-commerce.affiliateProgram")}
-                        <div className="ms-1 u-badge">new</div>
-                        <div className="text-muted small">
-                          {t("navigation.e-commerce.affiliateProgramDesc")}
-                        </div>
-                      </div>
-                    </NavDropdown.Item> */}
                     <NavDropdown.Item
                       className="d-flex"
                       href="https://tegro.money/security/"
@@ -241,42 +214,6 @@ export function DefaultHeader() {
                           </NavDropdown.Item>
                         </Col>
                       </Row>
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                  <NavDropdown
-                    title={
-                      <>
-                        {t("navigation.nft.nft")}{" "}
-                        <i className="fa-solid fa-angle-down small ms-auto ms-lg-2" />
-                      </>
-                    }
-                    id="collapsible-nav-dropdown"
-                  >
-                    <NavDropdown.Item
-                      className="d-flex"
-                      href="https://libermall.com/"
-                      target="_blank"
-                    >
-                      <i className="fa-light fa-house dropdown-item-icon" />
-                      <div className="ms-3">
-                        Libermall
-                        <div className="dropdown-item__desc text-muted small">
-                          {t("navigation.nft.libermallDesc")}
-                        </div>
-                      </div>
-                    </NavDropdown.Item>
-                    <NavDropdown.Item
-                      className="d-flex"
-                      href="https://libermall.com/#explore"
-                      target="_blank"
-                    >
-                      <i className="fa-light fa-hexagon-vertical-nft dropdown-item-icon" />
-                      <div className="ms-3">
-                        {t("navigation.nft.exploreCollections")}
-                        <div className="text-muted small">
-                          {t("navigation.nft.exploreCollectionsDesc")}
-                        </div>
-                      </div>
                     </NavDropdown.Item>
                   </NavDropdown>
                   <NavDropdown

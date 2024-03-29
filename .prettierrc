@@ -1,5 +1,7 @@
 {
-  "typescript": {
-    "indent": 2
-  }
+    "typescript": {
+        "indent": 2,
+        "printWidth": 100
+    },
+    "printWidth": 100
 }
